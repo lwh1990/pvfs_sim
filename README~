@@ -1,0 +1,88 @@
+Required:First install ROSS, codes-base and codes-net.
+
+
+Install ROSS:
+
+0 - Checkout, build, and install the trunk version of ROSS. At the time of
+release (0.4.0), ROSS's latest commit hash was 44b7b9a, so this revision is
+"safe" in the unlikely case incompatible changes come along in the future. If
+working from the CODES master branches, use the ROSS master branch.
+
+    git clone http://github.com/carothersc/ROSS.git
+    # optional: git checkout c04babe
+    cd ROSS
+    mkdir build
+    cd build
+	# note: other options for ARCH include i386 (for 32 bit machines),
+	# bgp, and bgq (for Blue Gene systems)
+    ARCH=x86_64 CC=mpicc CXX=mpicxx cmake -DCMAKE_INSTALL_PREFIX=../install ../
+    make -j 3
+    make install
+
+    <the result should be that the latest version of ROSS is installed in the 
+    ROSS/install/ directory>
+
+Install codes-base:
+
+git clone git://git.mcs.anl.gov/radix/codes-base
+1 - If you are building codes-base directly from the repository, run
+
+    ./prepare.sh
+
+2 - Configure codes-base. This can be done in the source directory or in a
+    dedicated build directory if you prefer out-of-tree builds.  The CC
+    environment variable must refer to an MPI compiler.
+
+    mkdir build
+    cd build
+    ../configure --with-ross=/path/to/ross/install --prefix=/path/to/codes-base/install CC=mpicc
+
+    To enable network tracing with dumpi, use the option
+    --with-dumpi = /path/to/dumpi/install with configure.
+
+    To enable using the darshan I/O generator, use the option
+    --with-darshan=/path/to/darshan with configure
+
+3 - Build and install codes-base
+
+    make && make install
+
+4 - (optional) run test programs
+
+    make tests && make check
+
+
+Install codes-net:
+
+git clone git://git.mcs.anl.gov/radix/codes-net
+
+0 - Install codes-base, either from the repository or using the 0.3.0 release
+    tarball (see http://www.mcs.anl.gov/projects/codes/).
+
+1 - If you are building codes-net directly from the repository, run
+
+    ./prepare.sh
+
+2 - Configure codes-net. This can be done in the source directory or in a
+    dedicated build directory if you prefer out-of-tree builds.  The CC
+    environment variable must refer to an MPI compiler.
+
+    mkdir build
+    cd build
+    ../configure --with-codes-base=/path/to/codes-base/install --prefix=/path/to/codes-net/install CC=mpicc
+
+3 - Build codes-net
+
+    make && make install
+4 - (optional) run test programs
+
+    make tests && make check
+
+Compile and run PVFS simulator code:
+
+Compile: make clean
+make pvfs
+
+Run:
+To run the code run run.sh with args NP-number of processors and SYNC-synchronization protocol. 
+Currently works with only sequential execution, so always use SYNC=1.
